@@ -22,11 +22,11 @@ Vagrant.configure("2") do |config|
         pkg_add -u
         pkg_add git
         pkg_add clang
+        pkg_add neofetch
   
       SHELL
   
     end
-    
     
   end
   

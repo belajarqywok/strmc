@@ -1,5 +1,2 @@
-file = main
-
-execute:
-	clang $(file).c -o $(file)
-	$(file)
+build:
+	clang main.c -o main

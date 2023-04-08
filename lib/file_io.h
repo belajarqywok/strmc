@@ -26,9 +26,10 @@ FILE* _fileops(char* filename, char* permission) {
 
 /**
  * 
- *  write file Method
+ *  Write File Method
  * 
 */
+
 void write_file(int* result_text, int length_result_text, char* output_file, char type) {
 
     FILE* file = _fileops(output_file, "w");
@@ -63,9 +64,10 @@ void write_file(int* result_text, int length_result_text, char* output_file, cha
 
 /**
  * 
- *  read plainfile Method
+ *  Read Plainfile Method
  * 
 */
+
 char* read_plainfile(char* input_file) {
 
     char* buffer;
@@ -99,9 +101,10 @@ char* read_plainfile(char* input_file) {
 
 /**
  * 
- *  read Hexfile Method
+ *  Read Hexfile Method
  * 
 */
+
 struct read_cipherfile_struct {
 
     int* hexs;

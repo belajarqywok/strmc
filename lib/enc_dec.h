@@ -15,7 +15,15 @@
 #include "file_io.h"
 
 
-void encrypt(char* argv[]) {
+
+
+/**
+ * 
+ *  Encryption Method
+ * 
+*/
+
+void encrypt (char* argv[]) {
 
 
     // plainfile
@@ -64,15 +72,23 @@ void encrypt(char* argv[]) {
     free(logic_xor);
     free(plainfile);
 
-    // printf("Status: Encryption Success!!!.\n");
+    printf("Status: Encryption Success!!!.\n\n");
 
 }
 
 
 
+
+/**
+ * 
+ *  Decryption Method
+ * 
+*/
+
 void decrypt (char* argv[]) {
 
-    // cipherfile
+    // cipherfile \w struct read cipherfile
+    // (Lib: "file_io.h")
     struct read_cipherfile_struct cipherfile = read_cipherfile(argv[2]);
 
 
@@ -101,16 +117,17 @@ void decrypt (char* argv[]) {
     );
 
 
-    // write file method (Lib: "file_io.h")
     char text[] = "text";
 
+    // write file method (Lib: "file_io.h")
     write_file(
         logic_xor, cipherfile.hexs_length,
         result_file, *text
     );
 
+    // free XOR logic memory allocation
     free(logic_xor);
 
-    // printf("Status: Decryption Success!!!.\n");
+    printf("Status: Decryption Success!!!.\n\n");
     
 }

@@ -1,4 +1,0 @@
-{
-    "username" : "admin123",
-    "token"    : "wcjdcb9wucn9wuc9wuehf9wnc9wuehf9wncwefw9nc0enwojefwocj"
-}
