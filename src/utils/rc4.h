@@ -1,17 +1,15 @@
 /**
  * 
- *  RC4 (Ron's Code / Rivest's Cipher) Lib
+ *  RC4 (Ron's Code / Rivest's Cipher)
  * 
 */
-
 #include <stdlib.h>
 
 #include "ksa.h"
 #include "prng.h"
 
-
-int* RC4(char* key, int key_length, int plaintext_length) {
-
+int* RC4(char* key, int key_length, int plaintext_length)
+{
     /**
      *  KSA result  
     */
@@ -20,7 +18,6 @@ int* RC4(char* key, int key_length, int plaintext_length) {
         key,
         key_length
     );
-
 
     /**
      *  PRNG result
@@ -31,10 +28,8 @@ int* RC4(char* key, int key_length, int plaintext_length) {
         plaintext_length
     );
 
-
     // free KSA memory allocation
     free(ksa_result);
     
     return prng_result;
-
 }

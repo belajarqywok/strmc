@@ -1,75 +1,57 @@
 /**
  * 
  * 
- *  File I/O Lib
+ *  File I/O
  * 
  * 
 */
-
-
-
 #include <stdio.h>
 #include <string.h>
 
-
-
-FILE* _fileops(char* filename, char* permission) {
-
+/*
+ *  Open File
+*/
+FILE* _fileops(char* filename, char* permission)
+{
     FILE* file;
     file = fopen(filename, permission);
 
     return file;
-
 }
-
-
 
 /**
  * 
  *  Write File Method
  * 
 */
-
-void write_file(int* result_text, int length_result_text, char* output_file, char type) {
-
+void write_file(int* result_text, int length_result_text, char* output_file, char type)
+{
     FILE* file = _fileops(output_file, "w");
 
     char hex[] = "hex";
     char text[] = "text";
 
     if (type == *hex) {
-
         for (int i = 0; i < length_result_text; i++) {
-
             fprintf(file, "%x ", result_text[i]);
-
         }
 
     } else if (type == *text) {
-
         for (int i = 0; i < length_result_text; i++) {
-
             fprintf(file, "%c", result_text[i]);
-
         } 
-
     }
 
-
     fclose(file);
-
 }
-
-
 
 /**
  * 
  *  Read Plainfile Method
  * 
 */
-
-char* read_plainfile(char* input_file) {
-
+char* read_plainfile(char* input_file)
+{
     char* buffer;
     long file_size;
     size_t result;
@@ -94,26 +76,21 @@ char* read_plainfile(char* input_file) {
     fclose(file);
 
     return buffer;
-
 }
-
-
 
 /**
  * 
  *  Read Hexfile Method
  * 
 */
-
-struct read_cipherfile_struct {
-
+struct read_cipherfile_struct
+{
     int* hexs;
     int hexs_length;
-
 };
 
-struct read_cipherfile_struct read_cipherfile(char* input_file) {
-
+struct read_cipherfile_struct read_cipherfile(char* input_file)
+{
     char hex_char;
     char hex_char_next;
 
@@ -145,22 +122,16 @@ struct read_cipherfile_struct read_cipherfile(char* input_file) {
 
     // check and changed to an infinite loop with a break statement
     while(1) { 
-
         hex_char = fgetc(file);
 
         // declaring a character array with a string
         char hex_char_allo[2] = {hex_char, '\0'}; 
-
         char forbidden_char[] = " ";
 
         // added check for EOF
         if(hex_char != *forbidden_char && hex_char != EOF) {  
-
-
             char hexstring[] = "0x";
-
             hex_char_next = fgetc(file);
-
 
             // added check for EOF
             if(hex_char_next != *forbidden_char && hex_char_next != EOF) {
@@ -173,18 +144,15 @@ struct read_cipherfile_struct read_cipherfile(char* input_file) {
 
             } else strcat(hexstring, hex_char_allo);
             
-
             int hexnumber = (int) strtol(hexstring, NULL, 0);
 
             F_HEX[F_HEX_i] = hexnumber;
-
             F_HEX_i += 1;
 
         // added check for EOF
         } else if (hex_char == EOF) break;
 
         else continue;
-
     }
 
     // added file close statement
@@ -194,5 +162,4 @@ struct read_cipherfile_struct read_cipherfile(char* input_file) {
     HX -> hexs_length = F_HEX_i;
 
     return *HX;
-
 }

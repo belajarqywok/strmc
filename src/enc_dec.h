@@ -1,54 +1,36 @@
 /**
  * 
  * 
- *  Encryption Lib
+ *  Encryption
  *  
  * 
 */
-
-
-
 #include <stdio.h>
 #include <string.h>
 
 #include "logic.h"
 #include "file_io.h"
 
-
-
-
 /**
  * 
  *  Encryption Method
  * 
 */
-
-void encrypt (char* argv[]) {
-
-
+void encrypt (char* argv[])
+{
     // plainfile
     char* plainfile = read_plainfile(argv[2]);
-
-    int plainfile_length = strlen(
-        plainfile
-    );
-
+    int plainfile_length = strlen(plainfile);
 
     // secret key
     char* key = argv[4];
-
-    int key_length = strlen(
-        key
-    );
-
+    int key_length = strlen(key);
 
     // result file
     char* result_file = argv[6];
 
-
     // XOR logic (Lib: logic.h)
     int* logic_xor = enc_logic(
-
         // key params
         key,
         key_length,
@@ -58,7 +40,6 @@ void encrypt (char* argv[]) {
         plainfile_length
     );
 
-
     // write file method (Lib: "file_io.h")
     char hex[] = "hex";
 
@@ -67,46 +48,33 @@ void encrypt (char* argv[]) {
         result_file, *hex
     );
 
-
     // free XOR logic memory allocation
     free(logic_xor);
     free(plainfile);
 
     printf("Status: Encryption Success!!!.\n\n");
-
 }
-
-
-
 
 /**
  * 
  *  Decryption Method
  * 
 */
-
-void decrypt (char* argv[]) {
-
+void decrypt (char* argv[])
+{
     // cipherfile \w struct read cipherfile
     // (Lib: "file_io.h")
     struct read_cipherfile_struct cipherfile = read_cipherfile(argv[2]);
 
-
     // secret key
     char *key = argv[4];
-
-    int key_length = strlen(
-        key
-    );
-
+    int key_length = strlen(key);
 
     // result file
     char *result_file = argv[6];
 
-
     // encrypt and decrypt XOR logic
     int* logic_xor = dec_logic(
-
         // key params
         key,
         key_length,
@@ -115,7 +83,6 @@ void decrypt (char* argv[]) {
         cipherfile.hexs,
         cipherfile.hexs_length
     );
-
 
     char text[] = "text";
 
@@ -128,6 +95,5 @@ void decrypt (char* argv[]) {
     // free XOR logic memory allocation
     free(logic_xor);
 
-    printf("Status: Decryption Success!!!.\n\n");
-    
+    printf("Status: Decryption Success!!!.\n\n");    
 }
