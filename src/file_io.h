@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAX_FILES 1000
+#define MAX_PATH_LENGTH 1024
+
 /*
  *  Open File
 */
@@ -57,20 +60,12 @@ char* read_plainfile(char* input_file)
     size_t result;
 
     FILE* file = _fileops(input_file, "r");
-
-    // seek to the end of the file
     fseek(file, 0, SEEK_END);  
 
-    // get the file size
     file_size = ftell(file); 
-
-    // seek back to the beginning of the file
     rewind(file);
 
-    // allocate memory for buffer
     buffer = (char*) malloc(file_size * sizeof(char));  
-
-    // read the file into the buffer
     result = fread(buffer, 1, file_size, file);
 
     fclose(file);
@@ -98,45 +93,29 @@ struct read_cipherfile_struct read_cipherfile(char* input_file)
 
     FILE* file = _fileops(input_file, "r");
 
-    // seek to the end of the file
     fseek(file, 0, SEEK_END);  
-
-    // get the file size
     file_size = ftell(file); 
 
-    // seek back to the beginning of the file
     rewind(file);
 
     struct read_cipherfile_struct* HX;
-
     HX = (struct read_cipherfile_struct*) 
-        malloc(sizeof(struct read_cipherfile_struct)
-    );
+        malloc(sizeof(struct read_cipherfile_struct));
 
-    // file hex allocation
     int F_HEX_i = 0;
+    int* F_HEX = (int*) malloc(sizeof(int) * file_size);
 
-    int* F_HEX = (int*) malloc(
-        sizeof(int) * file_size
-    );
-
-    // check and changed to an infinite loop with a break statement
     while(1) { 
         hex_char = fgetc(file);
 
-        // declaring a character array with a string
         char hex_char_allo[2] = {hex_char, '\0'}; 
         char forbidden_char[] = " ";
 
-        // added check for EOF
         if(hex_char != *forbidden_char && hex_char != EOF) {  
             char hexstring[] = "0x";
             hex_char_next = fgetc(file);
 
-            // added check for EOF
             if(hex_char_next != *forbidden_char && hex_char_next != EOF) {
-
-                // declaring a character array with a string
                 char hex_char_next_allo[2] = {hex_char_next, '\0'};
 
                 strcat(hexstring, hex_char_allo);
@@ -149,17 +128,72 @@ struct read_cipherfile_struct read_cipherfile(char* input_file)
             F_HEX[F_HEX_i] = hexnumber;
             F_HEX_i += 1;
 
-        // added check for EOF
         } else if (hex_char == EOF) break;
 
         else continue;
     }
 
-    // added file close statement
     fclose(file); 
-
     HX -> hexs = F_HEX;
     HX -> hexs_length = F_HEX_i;
 
     return *HX;
+}
+
+
+/**
+ * 
+ *  Read Directory FIles Method
+ * 
+*/
+struct list_file_struct {
+    char* files[MAX_FILES];
+    int count;
+};
+
+struct list_file_struct list_files(const char *path) {
+    struct list_file_struct fileList;
+    fileList.count = 0;
+
+    DIR *dp = opendir(path);
+    if (dp == NULL) {
+        perror("opendir");
+        fileList.count = -1;
+        return fileList;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dp))) {
+        char fullPath[MAX_PATH_LENGTH];
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", path, entry->d_name);
+
+        struct stat path_stat;
+        stat(fullPath, &path_stat);
+
+        if (S_ISDIR(path_stat.st_mode)) {
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+                continue;
+            }
+
+            fileList.files[fileList.count] = strdup(fullPath);
+            fileList.count++;
+
+            struct list_file_struct subDirList = list_files(fullPath);
+            for (int i = 0; i < subDirList.count; ++i) {
+                fileList.files[fileList.count] = strdup(subDirList.files[i]);
+                fileList.count++;
+            }
+        } else {
+            fileList.files[fileList.count] = strdup(fullPath);
+            fileList.count++;
+        }
+
+        if (fileList.count >= MAX_FILES) {
+            fprintf(stderr, "Too many files, increase MAX_FILES\n");
+            break;
+        }
+    }
+
+    closedir(dp);
+    return fileList;
 }

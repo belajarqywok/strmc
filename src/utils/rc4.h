@@ -10,25 +10,10 @@
 
 int* RC4(char* key, int key_length, int plaintext_length)
 {
-    /**
-     *  KSA result  
-    */
-    int* ksa_result  = KSA(
+    int* ksa_result  = KSA(key, key_length);
 
-        key,
-        key_length
-    );
-
-    /**
-     *  PRNG result
-    */
-    int* prng_result = PRNG(
-
-        ksa_result, 
-        plaintext_length
-    );
-
-    // free KSA memory allocation
+    int* prng_result = PRNG(ksa_result, plaintext_length);
+ 
     free(ksa_result);
     
     return prng_result;

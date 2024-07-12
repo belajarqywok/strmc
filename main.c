@@ -16,11 +16,17 @@ int main (int argc, char* argv[])
     /**
      * 
      *  Examples :
-     *      main -f plain.txt -k test -o cipher.txt encrypt
-     *      main --file plain.txt --key test --output cipher.txt encrypt
+     *      main -f plain.txt -k secret123 -o cipher.txt encrypt
+     *      main --file plain.txt --key secret123 --output cipher.txt encrypt
      * 
-     *      main -f cipher.txt -k test -o plain.txt decrypt
-     *      main --file cipher.txt --key test --output plain.txt decrypt
+     *      main -f cipher.txt -k secret123 -o plain.txt decrypt
+     *      main --file cipher.txt --key secret123 --output plain.txt decrypt
+     * 
+     *      main -d cipher.txt -k secret123 encrypt
+     *      main --directory --key secret123 encrypt
+     * 
+     *      main -d /dirx -k secret123 decrypt
+     *      main --directory /dirx --key secret123 decrypt
      * 
     */
 
@@ -31,6 +37,15 @@ int main (int argc, char* argv[])
     const bool file_opt = (  
         !strcmp(argv[1], "-f") ||
         !strcmp(argv[1], "--file")
+    );
+
+    /**
+     *  Directory Option
+     *  Option: [-d | --directory]
+    */
+    const bool directory_opt = (
+        !strcmp(argv[1], "-d") ||
+        !strcmp(argv[1], "--directory")
     );
 
     /**
@@ -52,17 +67,23 @@ int main (int argc, char* argv[])
     );
 
     /**
-     *  Encrypt And Decrypt Condition
+     *  Encrypt And Decrypt FIle Condition
      *  Option: [encrypt | decrypt]
     */
     if ((bool) file_opt && key_opt && output_opt) {
-        // encrypt method (Lib: "lib/encrypt.h")
         if ((bool) !strcmp(argv[7], "encrypt")) encrypt(argv);
         
-        // decrypt method (Lib: "lib/decrypt.h")
         else if ((bool) !strcmp(argv[7], "decrypt")) decrypt(argv);
 
-    // help log
+    /**
+     *  Encrypt And Decrypt Directory Condition
+     *  Option: [encrypt | decrypt]
+    */
+    } else if ((bool) directory_opt && key_opt) {
+        if ((bool) !strcmp(argv[5], "encrypt")) encrypt_dir(argv);
+        
+        else if ((bool) !strcmp(argv[5], "decrypt")) decrypt_dir(argv);
+
     } else help_log();
 
     return 0;    

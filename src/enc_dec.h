@@ -7,6 +7,9 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #include "logic.h"
 #include "file_io.h"
@@ -18,29 +21,22 @@
 */
 void encrypt (char* argv[])
 {
-    // plainfile
     char* plainfile = read_plainfile(argv[2]);
     int plainfile_length = strlen(plainfile);
 
-    // secret key
     char* key = argv[4];
     int key_length = strlen(key);
 
-    // result file
     char* result_file = argv[6];
 
-    // XOR logic (Lib: logic.h)
     int* logic_xor = enc_logic(
-        // key params
         key,
         key_length,
 
-        // plaintext params
         plainfile,
         plainfile_length
     );
 
-    // write file method (Lib: "file_io.h")
     char hex[] = "hex";
 
     write_file(
@@ -48,52 +44,123 @@ void encrypt (char* argv[])
         result_file, *hex
     );
 
-    // free XOR logic memory allocation
     free(logic_xor);
     free(plainfile);
 
     printf("Status: Encryption Success!!!.\n\n");
 }
 
+
 /**
  * 
- *  Decryption Method
+ *  Encryption Directory Method
+ * 
+*/
+void encrypt_dir (char* argv[])
+{
+    struct list_file_struct fileList = list_files(argv[2]);
+
+    for (int i = 0; i < fileList.count; ++i) {
+        char* plainfile = read_plainfile(fileList.files[i]);
+        int plainfile_length = strlen(plainfile);
+
+        char* key = argv[4];
+        int key_length = strlen(key);
+
+        char* result_file = fileList.files[i];
+
+        int* logic_xor = enc_logic(
+            key,
+            key_length,
+
+            plainfile,
+            plainfile_length
+        );
+
+        char hex[] = "hex";
+
+        write_file(
+            logic_xor, plainfile_length,
+            result_file, *hex
+        );
+
+        free(logic_xor);
+        free(plainfile);
+
+        printf("Status: Encryption Success!!!.\n\n");
+        free(fileList.files[i]);
+    }
+}
+
+/**
+ * 
+ *  Decryption File Method
  * 
 */
 void decrypt (char* argv[])
 {
-    // cipherfile \w struct read cipherfile
-    // (Lib: "file_io.h")
     struct read_cipherfile_struct cipherfile = read_cipherfile(argv[2]);
 
-    // secret key
     char *key = argv[4];
     int key_length = strlen(key);
 
-    // result file
     char *result_file = argv[6];
 
-    // encrypt and decrypt XOR logic
     int* logic_xor = dec_logic(
-        // key params
         key,
         key_length,
 
-        // plaintext params
         cipherfile.hexs,
         cipherfile.hexs_length
     );
 
     char text[] = "text";
 
-    // write file method (Lib: "file_io.h")
     write_file(
         logic_xor, cipherfile.hexs_length,
         result_file, *text
     );
 
-    // free XOR logic memory allocation
     free(logic_xor);
 
     printf("Status: Decryption Success!!!.\n\n");    
+}
+
+/**
+ * 
+ *  Decryption Directory Method
+ * 
+*/
+void decrypt_dir (char* argv[])
+{
+    struct list_file_struct fileList = list_files(argv[2]);
+
+    for (int i = 0; i < fileList.count; ++i) {
+        struct read_cipherfile_struct cipherfile = read_cipherfile(fileList.files[i]);
+
+        char *key = argv[4];
+        int key_length = strlen(key);
+
+        char *result_file = fileList.files[i];
+
+        int* logic_xor = dec_logic(
+            key,
+            key_length,
+
+            cipherfile.hexs,
+            cipherfile.hexs_length
+        );
+
+        char text[] = "text";
+
+        write_file(
+            logic_xor, cipherfile.hexs_length,
+            result_file, *text
+        );
+
+        free(logic_xor);
+
+        printf("Status: Decryption Success!!!.\n\n");  
+        free(fileList.files[i]);
+    }
 }
